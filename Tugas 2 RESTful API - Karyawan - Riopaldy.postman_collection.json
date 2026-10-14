@@ -1,0 +1,349 @@
+{
+  "info": {
+    "_postman_id": "3fbeb509-a2a3-40a3-b485-f1bb1e9e4e4b",
+    "name": "Tugas 2 RESTful API - Karyawan - Riopaldy",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58533129",
+    "_collection_link": "https://go.postman.co/collection/58533129-3fbeb509-a2a3-40a3-b485-f1bb1e9e4e4b?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Get All Employees",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response berisi array karyawan\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"Data karyawan tidak kosong\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.length).to.be.greaterThan(0);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/employees",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "employees"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Employee by ID di Postman",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Data karyawan memiliki ID 1\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.id).to.eql(1);\r\n});\r\n\r\npm.test(\"Data karyawan memiliki nama\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data).to.have.property(\"nama\");\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/employees/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "employees",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Employee Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"Status code is 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Response memiliki status error\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.status).to.eql(\"error\");\r\n});\r\n\r\npm.test(\"Pesan error tersedia\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data).to.have.property(\"message\");\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/employees/99",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "employees",
+            "99"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Filter Employees by Departemen",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response berupa array\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"Semua karyawan berasal dari departemen Keuangan\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.length).to.be.greaterThan(0);\r\n\r\n    data.forEach(function (employee) {\r\n        pm.expect(employee.departemen.toLowerCase()).to.eql(\"keuangan\");\r\n    });\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/employees?departemen=Keuangan",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "employees"
+          ],
+          "query": [
+            {
+              "key": "departemen",
+              "value": "Keuangan"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Employee",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Status response adalah success\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.status).to.eql(\"success\");\r\n});\r\n\r\nconst responseData = pm.response.json();\r\n\r\npm.test(\"Data karyawan berhasil ditambahkan\", function () {\r\n    pm.expect(responseData.data.nama).to.eql(\"Andi Saputra\");\r\n    pm.expect(responseData.data.nip).to.eql(\"EMP-0048\");\r\n    pm.expect(responseData.data.id).to.exist;\r\n});\r\n\r\nif (pm.response.code === 201 && responseData.data && responseData.data.id) {\r\n    pm.collectionVariables.set(\"employeeId\", responseData.data.id);\r\n}\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nip\": \"EMP-0048\",\r\n  \"nama\": \"Andi Saputra\",\r\n  \"jabatan\": \"Staf Administrasi\",\r\n  \"departemen\": \"Administrasi\",\r\n  \"gaji\": 6000000\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/employees",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "employees"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Employee Invalid",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"Status code is 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"Response memiliki status error\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.status).to.eql(\"error\");\r\n});\r\n\r\npm.test(\"Pesan validasi tersedia\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data).to.have.property(\"message\");\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n{\r\n  \"nip\": \"EMP-0049\",\r\n  \"nama\": \"Dina Putri\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/employees",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "employees"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Employee",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Status response adalah success\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.status).to.eql(\"success\");\r\n});\r\n\r\npm.test(\"Jabatan karyawan berhasil diperbarui\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.data.id).to.eql(1);\r\n    pm.expect(data.data.jabatan).to.eql(\"Supervisor Akuntansi\");\r\n    pm.expect(data.data.gaji).to.eql(7500000);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n{\r\n  \"nip\": \"EMP-0045\",\r\n  \"nama\": \"Agus Pratama\",\r\n  \"jabatan\": \"Supervisor Akuntansi\",\r\n  \"departemen\": \"Keuangan\",\r\n  \"gaji\": 7500000\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/employees/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "employees",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Employee Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"Status code is 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Response memiliki status error\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.status).to.eql(\"error\");\r\n});\r\n\r\npm.test(\"Pesan karyawan tidak ditemukan tersedia\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.message).to.include(\"tidak ditemukan\");\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n{\r\n  \"nip\": \"EMP-0099\",\r\n  \"nama\": \"Karyawan Tidak Ada\",\r\n  \"jabatan\": \"Staf\",\r\n  \"departemen\": \"Administrasi\",\r\n  \"gaji\": 5000000\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/employees/99",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "employees",
+            "99"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Employee",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Status response adalah success\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.status).to.eql(\"success\");\r\n});\r\n\r\npm.test(\"Data karyawan berhasil dihapus\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.message).to.eql(\"Data karyawan berhasil dihapus\");\r\n    pm.expect(data.data).to.eql(null);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/employees/{{employeeId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "employees",
+            "{{employeeId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Employee Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"Status code is 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Response memiliki status error\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.status).to.eql(\"error\");\r\n});\r\n\r\npm.test(\"Pesan karyawan tidak ditemukan tersedia\", function () {\r\n    const data = pm.response.json();\r\n    pm.expect(data.message).to.include(\"tidak ditemukan\");\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/employees/99",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "employees",
+            "99"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    },
+    {
+      "key": "employeeId",
+      "value": ""
+    }
+  ]
+}
